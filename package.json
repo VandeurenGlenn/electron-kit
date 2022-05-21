@@ -1,0 +1,35 @@
+{
+  "name": "@vandeurenglenn/electron-kit",
+  "version": "0.1.0",
+  "description": "- Distribute an electron app",
+  "main": "dist/kit.js",
+  "bin": {
+    "electron-kit": "./bin/cli.js"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VandeurenGlenn/electron-kit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VandeurenGlenn/electron-kit/issues"
+  },
+  "homepage": "https://github.com/VandeurenGlenn/electron-kit#readme",
+  "devDependencies": {
+    "electron-winstaller": "^5.0.0",
+    "rollup": "^2.74.1"
+  },
+  "dependencies": {
+    "asar": "^3.1.0",
+    "electron": "^18.2.4",
+    "mv": "^2.1.1",
+    "rcedit": "^3.0.1"
+  }
+}
