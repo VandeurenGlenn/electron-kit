@@ -30,7 +30,7 @@
     "electron": "^18.2.4",
     "electron-winstaller": "^5.1.0",
     "mv": "^2.1.1",
-    "ora": "^6.1.2",
+    "ora": "^5.0.0",
     "rcedit": "^3.0.1"
   }
 }
