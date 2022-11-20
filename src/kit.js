@@ -37,7 +37,7 @@ const clean = async path => {
 
 const getPlatformPath = (os, asar, name) => {
   let platformPath = os === 'darwin' ? macPatch : win32Path
-  if (name) platformPath = platformPath.replace('Electron.app', `${name}.app`)
+  // if (name) platformPath = platformPath.replace('Electron.app', `${name}.app`)
   return asar ? platformPath : join(platformPath, 'app')
 }
 
@@ -81,7 +81,7 @@ export default async (options = {}) => {
 // Electron.app/Contents/Frameworks/Electron Helper.app/Contents/Info.plist
   spinner.text = 'rebranding'
     if (os === 'darwin') {
-      // renameSync()
+      // renameSync(join(electronPath, 'Electron.app'), join(electronPath, `${options.productName}.app`))
     } else if (os === 'win32') {
       renameSync(join(electronPath, 'electron.exe'), join(electronPath, `${options.productName}.exe`))
       // permission: asInvoker, highestAvailable, or requireAdministrator.
@@ -121,5 +121,7 @@ export default async (options = {}) => {
     } catch (e) {
       spinner.fail(`${e.message}`);
     }
+  } if (os === 'darwin') {
+    // createMacInstaller()
   }
 }

@@ -72,7 +72,7 @@ const clean = async path => {
 
 const getPlatformPath = (os, asar, name) => {
   let platformPath = os === 'darwin' ? macPatch : win32Path;
-  if (name) platformPath = platformPath.replace('Electron.app', `${name}.app`);
+  // if (name) platformPath = platformPath.replace('Electron.app', `${name}.app`)
   return asar ? platformPath : join(platformPath, 'app')
 };
 
@@ -154,8 +154,7 @@ var kit = async (options = {}) => {
     } catch (e) {
       spinner.fail(`${e.message}`);
     }
-  }
-};
+  }};
 
 const pack = require(path.join(process.cwd(), 'package.json'));
 
