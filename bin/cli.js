@@ -9,11 +9,13 @@ var path = require('path');
 var rcedit = require('rcedit');
 var electronWinstaller = require('electron-winstaller');
 var ora = require('ora');
+var createDMG = require('electron-installer-dmg');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var rcedit__default = /*#__PURE__*/_interopDefaultLegacy(rcedit);
 var ora__default = /*#__PURE__*/_interopDefaultLegacy(ora);
+var createDMG__default = /*#__PURE__*/_interopDefaultLegacy(createDMG);
 
 const tryMake = async (path) => {
   try {
@@ -154,7 +156,15 @@ var kit = async (options = {}) => {
     } catch (e) {
       spinner.fail(`${e.message}`);
     }
-  }};
+  } if (os$1 === 'darwin') {
+    await createDMG__default["default"]({
+      appPath: join(cwd, options.output, 'unpacked', 'electron', 'Electron.app'),
+      name: options.productName.replace(/\s+/g, ''),
+      out: join(cwd, options.output)
+    });
+    // createMacInstaller()
+  }
+};
 
 const pack = require(path.join(process.cwd(), 'package.json'));
 

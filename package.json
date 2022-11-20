@@ -28,6 +28,7 @@
   "dependencies": {
     "asar": "^3.1.0",
     "electron": "^18.2.4",
+    "electron-installer-dmg": "^4.0.0",
     "electron-winstaller": "^5.1.0",
     "mv": "^2.1.1",
     "ora": "^5.0.0",

@@ -7,7 +7,7 @@ import { posix } from 'path'
 import rcedit from 'rcedit'
 import { createWindowsInstaller } from 'electron-winstaller'
 import ora from 'ora';
-
+import createDMG from 'electron-installer-dmg'
 
 const { join } = posix
 const spinner = ora('loading electron-kit').start();
@@ -122,6 +122,15 @@ export default async (options = {}) => {
       spinner.fail(`${e.message}`);
     }
   } if (os === 'darwin') {
+    await createDMG({
+      appPath: join(cwd, options.output, 'unpacked', 'electron', 'Electron.app'),
+      name: options.productName.replace(/\s+/g, ''),
+      out: join(cwd, options.output)
+    })
     // createMacInstaller()
+  }
+
+  if (os === 'linux') {
+
   }
 }
