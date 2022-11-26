@@ -30,7 +30,7 @@ const defaultOptions = {
 
 const safeRM = (path) => exec('rm', ['-rf', path])
 const safeCP = (from, to) => exec('cp', ['-r', from, to])
-const safeInstall = (options) => exec('npm', ['i'], options)
+const safeInstall = (options) => exec(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['i'], options)
 
 const clean = async path => {
   try {
