@@ -3,13 +3,14 @@
 
 var os = require('os');
 var fs = require('fs');
-var child_process = require('child_process');
+var promises = require('child_process/promises');
 var asar = require('asar');
 var path = require('path');
 var rcedit = require('rcedit');
 var electronWinstaller = require('electron-winstaller');
 var ora = require('ora');
 var createDMG = require('electron-installer-dmg');
+var node_util = require('node:util');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -46,6 +47,8 @@ var prepare = async (outputPath, platformPath, cwd) => {
   // await tryMake(output)
 };
 
+const exec = node_util.promisify(promises.execFile);
+
 const { join } = path.posix;
 const spinner = ora__default["default"]('loading electron-kit').start();
 
@@ -62,9 +65,13 @@ const defaultOptions = {
   asar: true
 };
 
+const safeRM = (path) => exec('rm', ['-rf', path]);
+const safeCP = (from, to) => exec('cp', ['-r', from, to]);
+const safeInstall = (options) => exec('npm', ['i'], options);
+
 const clean = async path => {
   try {
-    child_process.execSync(`rm -rf ${path}`);
+    await safeRM(path);
   } catch (e) {
     // nothing to cleanup
     // better to exec then waste checking if it exists
@@ -93,22 +100,23 @@ var kit = async (options = {}) => {
   await prepare(options.output, join('unpacked', platformPath), cwd);
 
   spinner.text = 'copying electron binaries';
-  child_process.execSync(`cp -r ${join(cwd, 'node_modules', 'electron', 'dist', '**')} ${electronPath}`);
-
+  await safeCP(join(cwd, 'node_modules', 'electron', 'dist', '**'), electronPath);
+  
   try {
     spinner.text = 'installing npm dependencies';
     const pack = require(join(cwd, options.input, 'package.json'));
-    await child_process.execSync('npm i', {cwd: join(cwd, options.input)});
+    await safeInstall({cwd: join(cwd, options.input)});
   } catch (e) {
     spinner.warn('no package.json, not using dependencies?');
   }
   if (options.asar) {
     spinner.text = 'creating asar archive';
     await asar.createPackage(join(cwd, options.input), join(cwd, '.temp-electron-kit', 'app.asar'));
-    child_process.execSync(`cp -r ${join(cwd, '.temp-electron-kit', 'app.asar')} ${join(cwd, options.output, 'unpacked', platformPath)}`);
+
+    await safeCP(join(cwd, '.temp-electron-kit', 'app.asar'), join(cwd, options.output, 'unpacked', platformPath));
   } else {
     spinner.text = 'copying app files';
-    child_process.execSync(`cp -r ${join(cwd, options.input, '**')} ${join(cwd, options.output, 'unpacked', platformPath)}`);
+    await safeCP(join(cwd, options.input, '**'), join(cwd, options.output, 'unpacked', platformPath));
   }
 
   if (options.productName) {

@@ -1,6 +1,6 @@
 import { platform } from 'os'
 import {readdirSync, renameSync } from 'fs'
-import { execSync } from 'child_process'
+import { execFile } from 'child_process/promises'
 import { createPackage } from 'asar'
 import prepare from './prepare'
 import { posix } from 'path'
@@ -8,6 +8,9 @@ import rcedit from 'rcedit'
 import { createWindowsInstaller } from 'electron-winstaller'
 import ora from 'ora';
 import createDMG from 'electron-installer-dmg'
+import { promisify } from 'node:util'
+
+const exec = promisify(execFile)
 
 const { join } = posix
 const spinner = ora('loading electron-kit').start();
@@ -25,9 +28,13 @@ const defaultOptions = {
   asar: true
 }
 
+const safeRM = (path) => exec('rm', ['-rf', path])
+const safeCP = (from, to) => exec('cp', ['-r', from, to])
+const safeInstall = (options) => exec('npm', ['i'], options)
+
 const clean = async path => {
   try {
-    execSync(`rm -rf ${path}`)
+    await safeRM(path)
   } catch (e) {
     // nothing to cleanup
     // better to exec then waste checking if it exists
@@ -56,22 +63,23 @@ export default async (options = {}) => {
   await prepare(options.output, join('unpacked', platformPath), cwd)
 
   spinner.text = 'copying electron binaries'
-  execSync(`cp -r ${join(cwd, 'node_modules', 'electron', 'dist', '**')} ${electronPath}`)
-
+  await safeCP(join(cwd, 'node_modules', 'electron', 'dist', '**'), electronPath)
+  
   try {
     spinner.text = 'installing npm dependencies'
     const pack = require(join(cwd, options.input, 'package.json'))
-    await execSync('npm i', {cwd: join(cwd, options.input)})
+    await safeInstall({cwd: join(cwd, options.input)})
   } catch (e) {
     spinner.warn('no package.json, not using dependencies?');
   }
   if (options.asar) {
     spinner.text = 'creating asar archive'
     await createPackage(join(cwd, options.input), join(cwd, '.temp-electron-kit', 'app.asar'))
-    execSync(`cp -r ${join(cwd, '.temp-electron-kit', 'app.asar')} ${join(cwd, options.output, 'unpacked', platformPath)}`)
+
+    await safeCP(join(cwd, '.temp-electron-kit', 'app.asar'), join(cwd, options.output, 'unpacked', platformPath))
   } else {
     spinner.text = 'copying app files'
-    execSync(`cp -r ${join(cwd, options.input, '**')} ${join(cwd, options.output, 'unpacked', platformPath)}`)
+    await safeCP(join(cwd, options.input, '**'), join(cwd, options.output, 'unpacked', platformPath))
   }
 
   if (options.productName) {
