@@ -3,7 +3,7 @@
 
 var os = require('os');
 var fs = require('fs');
-var promises = require('child_process/promises');
+var node_child_process = require('node:child_process');
 var asar = require('asar');
 var path = require('path');
 var rcedit = require('rcedit');
@@ -47,7 +47,7 @@ var prepare = async (outputPath, platformPath, cwd) => {
   // await tryMake(output)
 };
 
-const exec = node_util.promisify(promises.execFile);
+const exec = node_util.promisify(node_child_process.execFile);
 
 const { join } = path.posix;
 const spinner = ora__default["default"]('loading electron-kit').start();

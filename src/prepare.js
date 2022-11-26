@@ -1,5 +1,5 @@
 import { mkdirSync } from 'fs'
-import { join, sep } from 'path'
+import { join } from 'path'
 
 const tryMake = async (path) => {
   try {

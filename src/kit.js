@@ -1,6 +1,6 @@
 import { platform } from 'os'
-import {readdirSync, renameSync } from 'fs'
-import { execFile } from 'child_process/promises'
+import { renameSync } from 'fs'
+import { execFile } from 'node:child_process'
 import { createPackage } from 'asar'
 import prepare from './prepare'
 import { posix } from 'path'
