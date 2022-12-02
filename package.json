@@ -1,7 +1,7 @@
 {
   "name": "@vandeurenglenn/electron-kit",
   "version": "0.3.0",
-  "description": "- Distribute an electron app",
+  "description": "Distribute an electron app",
   "main": "dist/kit.js",
   "bin": {
     "electron-kit": "./bin/cli.js"
@@ -30,7 +30,6 @@
     "electron": "^22.0.0",
     "electron-installer-dmg": "^4.0.0",
     "electron-winstaller": "^5.1.0",
-    "got": "^12.5.3",
     "mv": "^2.1.1",
     "ora": "^5.0.0",
     "rcedit": "^3.0.1"
